@@ -10,7 +10,7 @@ const GITHUB_CONTRIBUTIONS_DATA = [
   { year: '2023', contributions: 1442 },
   { year: '2024', contributions: 1259 },
   { year: '2025', contributions: 1398 },
-  { year: '2026', contributions: 95 },
+  { year: '2026', contributions: 206 },
 ];
 
 function CodingJourney() {
