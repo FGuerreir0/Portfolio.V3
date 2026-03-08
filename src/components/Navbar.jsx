@@ -25,6 +25,7 @@ function Navbar() {
           <a href="#about" onClick={(e) => handleClick(e, '#about')}>About</a>
           <a href="#skills" onClick={(e) => handleClick(e, '#skills')}>Skills</a>
           <a href="#projects" onClick={(e) => handleClick(e, '#projects')}>Projects</a>
+          <a href="#credentials" onClick={(e) => handleClick(e, '#credentials')}>Credentials</a>
           <a href="#contact" onClick={(e) => handleClick(e, '#contact')}>Contact</a>
         </div>
       </div>
