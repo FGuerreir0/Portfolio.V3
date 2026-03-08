@@ -317,13 +317,6 @@ body {
     line-height: 1.2;
 }
 
-h3.section-title {
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
-    font-weight: 600;
-    margin-bottom: 2rem;
-    margin-top: 0;
-}
-
 /* About Section */
 .about {
     padding: 6rem 0;
@@ -430,27 +423,6 @@ h3.section-title {
     display: flex;
     flex-direction: column;
     height: 100%;
-}
-
-.chart-header-with-icon {
-    display: none;
-}
-
-.chart-title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: var(--text-color);
-    margin-bottom: 0.5rem;
-    background: var(--gradient-1);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.chart-subtitle {
-    color: var(--text-secondary);
-    font-size: 1rem;
-    margin-bottom: 2rem;
 }
 
 .chart-container {
@@ -825,24 +797,6 @@ h3.section-title {
     }
     66% {
         transform: translate(-20px, 20px) rotate(240deg);
-    }
-}
-
-@keyframes glitch {
-    0%, 100% {
-        transform: translate(0);
-    }
-    20% {
-        transform: translate(-2px, 2px);
-    }
-    40% {
-        transform: translate(-2px, -2px);
-    }
-    60% {
-        transform: translate(2px, 2px);
-    }
-    80% {
-        transform: translate(2px, -2px);
     }
 }
 
