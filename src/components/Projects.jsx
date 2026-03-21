@@ -3,7 +3,7 @@ const projectsData = [
     title: 'Al Coda',
     description: 'An all-in-one management platform for music organizations. Manage attendance, events, fuel voucher reimbursements, and analytics for orchestras, bands, choirs, and ensembles — with multi-language, multi-currency, and role-based access control.',
     tags: ['React', 'TypeScript', 'Node.js', 'Supabase', 'TailwindCSS'],
-    liveLink: 'https://alcoda.netlify.app/',
+    liveLink: 'https://alcoda.pt/',
     gradient: 'gradient-5',
     icon: '/images/alcoda.png'
   },
