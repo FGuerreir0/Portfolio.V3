@@ -9,7 +9,7 @@ const projectsData = [
   },
   {
     title: 'DotDrop',
-    description: 'A real-time collaborative pixel art platform inspired by r/place. Join thousands of players in creating massive pixel art together! Built with React, Canvas API, WebSockets, and Supabase.',
+    description: 'A real-time collaborative pixel art platform inspired by r/place. Join to other players in creating massive pixel art together! Built with React, Canvas API, WebSockets, and Supabase.',
     tags: ['React', 'WebSockets', 'Supabase', 'Canvas API'],
     link: 'https://github.com/FGuerreir0/dotdrop',
     liveLink: 'https://dotdrop-art.netlify.app/',
