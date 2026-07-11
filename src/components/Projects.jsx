@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 const projectsData = [
   {
     title: 'Al Coda',
@@ -6,6 +8,17 @@ const projectsData = [
     liveLink: 'https://alcoda.pt/',
     gradient: 'gradient-5',
     icon: '/images/alcoda.png'
+  },
+  {
+    title: 'ghostimport',
+    description: 'An npm package that detects ghost imports in your code — imports of packages that don\'t exist, hallucinated by AI coding tools. Helps prevent supply-chain attacks by catching them before they reach production, with CI and pre-commit support.',
+    tags: ['TypeScript', 'Node.js', 'CLI', 'npm', 'AI Safety'],
+    link: 'https://github.com/FGuerreir0/ghostimport',
+    liveLink: 'https://www.npmjs.com/package/ghostimport',
+    npmPackage: 'ghostimport',
+    githubRepo: 'FGuerreir0/ghostimport',
+    gradient: 'gradient-2',
+    icon: '/images/ghostimport.png'
   },
   {
     title: 'DotDrop',
@@ -27,6 +40,119 @@ const projectsData = [
   }
 ];
 
+function formatCount(count) {
+  if (count >= 1000000) return (count / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (count >= 1000) return (count / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return String(count);
+}
+
+async function fetchCached(key, url, extract) {
+  const cached = sessionStorage.getItem(key);
+  if (cached !== null) return JSON.parse(cached);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${res.status}`);
+  const value = extract(await res.json());
+  sessionStorage.setItem(key, JSON.stringify(value));
+  return value;
+}
+
+function useProjectStats(project) {
+  const [stats, setStats] = useState({});
+
+  useEffect(() => {
+    let active = true;
+
+    if (project.githubRepo) {
+      fetchCached(`gh-stars:${project.githubRepo}`, `https://api.github.com/repos/${project.githubRepo}`, (data) => data.stargazers_count)
+        .then((stars) => active && setStats((prev) => ({ ...prev, stars })))
+        .catch(() => {});
+    }
+
+    if (project.npmPackage) {
+      fetchCached(
+        `npm-downloads:${project.npmPackage}`,
+        `https://api.npmjs.org/downloads/point/last-month/${project.npmPackage}`,
+        (data) => data.downloads
+      )
+        .then((downloads) => active && setStats((prev) => ({ ...prev, downloads })))
+        .catch(() => {});
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [project]);
+
+  return stats;
+}
+
+function ProjectCard({ project }) {
+  const stats = useProjectStats(project);
+
+  return (
+    <div className="project-card">
+      <div className={`project-image ${project.gradient}`}>
+        {project.icon && (
+          <img src={project.icon} alt={`${project.title} icon`} className="project-icon" />
+        )}
+        <div className="project-overlay">
+          <div className="project-overlay-links">
+            {project.liveLink && (
+              <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="project-link" title="Live Demo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                  <polyline points="15 3 21 3 21 9"/>
+                  <line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+              </a>
+            )}
+            {project.link && (
+              <a href={project.link} target="_blank" rel="noopener noreferrer" className="project-link" title="GitHub">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.026 2.747-1.026.546 1.378.202 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.2 22 16.447 22 12.021 22 6.484 17.522 2 12 2z"/>
+                </svg>
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="project-content">
+        <div className="project-title-row">
+          <h3>{project.title}</h3>
+          {(stats.stars != null || stats.downloads != null) && (
+            <div className="project-stats">
+              {stats.stars != null && (
+                <span className="project-stat" title="GitHub stars">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                  </svg>
+                  {formatCount(stats.stars)}
+                </span>
+              )}
+              {stats.downloads != null && (
+                <span className="project-stat" title="npm downloads (last month)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  {formatCount(stats.downloads)}/mo
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        <p>{project.description}</p>
+        <div className="project-tags">
+          {project.tags.map((tag, tagIndex) => (
+            <span key={tagIndex}>{tag}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Projects() {
   return (
     <section id="projects" className="projects">
@@ -34,42 +160,7 @@ function Projects() {
         <h2 className="section-title">Featured Projects</h2>
         <div className="projects-grid">
           {projectsData.map((project, index) => (
-            <div key={index} className="project-card">
-              <div className={`project-image ${project.gradient}`}>
-                {project.icon && (
-                  <img src={project.icon} alt={`${project.title} icon`} className="project-icon" />
-                )}
-                <div className="project-overlay">
-                  <div className="project-overlay-links">
-                    {project.liveLink && (
-                      <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="project-link" title="Live Demo">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                          <polyline points="15 3 21 3 21 9"/>
-                          <line x1="10" y1="14" x2="21" y2="3"/>
-                        </svg>
-                      </a>
-                    )}
-                    {project.link && (
-                      <a href={project.link} target="_blank" rel="noopener noreferrer" className="project-link" title="GitHub">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.026 2.747-1.026.546 1.378.202 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.2 22 16.447 22 12.021 22 6.484 17.522 2 12 2z"/>
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="project-content">
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
-                <div className="project-tags">
-                  {project.tags.map((tag, tagIndex) => (
-                    <span key={tagIndex}>{tag}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <ProjectCard key={index} project={project} />
           ))}
         </div>
       </div>
