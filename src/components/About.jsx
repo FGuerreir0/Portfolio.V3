@@ -25,7 +25,7 @@ const lessons = [
     },
   },
   {
-    from: { en: 'From working with people', pt: 'Do trabalho com pessoas' },
+    from: { en: 'From working with the public', pt: 'Do trabalho com o público' },
     title: { en: 'Calm & ownership', pt: 'Calma e responsabilidade' },
     text: {
       en: 'Customer-facing and security jobs taught me to stay calm under pressure, communicate well and take responsibility until the problem is solved.',
