@@ -1,11 +1,11 @@
 {
-  "name": "Fábio Guerreiro Portfolio",
-  "short_name": "FG Portfolio",
-  "description": "Full Stack Developer Portfolio",
+  "name": "Fábio Guerreiro — Full Stack Developer",
+  "short_name": "Fábio Guerreiro",
+  "description": "Portfolio of Fábio Guerreiro, Full Stack Developer in Portugal",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#6366f1",
+  "background_color": "#FAFAF8",
+  "theme_color": "#FAFAF8",
   "icons": [
     {
       "src": "/favicon.svg",

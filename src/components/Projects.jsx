@@ -1,41 +1,94 @@
 import { useEffect, useState } from 'react';
+import { useLang } from '../i18n';
 
 const projectsData = [
   {
-    title: 'Al Coda',
-    description: 'An all-in-one management platform for music organizations. Manage attendance, events, fuel voucher reimbursements, and analytics for orchestras, bands, choirs, and ensembles — with multi-language, multi-currency, and role-based access control.',
-    tags: ['React', 'TypeScript', 'Node.js', 'Supabase', 'TailwindCSS'],
-    liveLink: 'https://alcoda.pt/',
-    gradient: 'gradient-5',
-    icon: '/images/alcoda.png'
-  },
-  {
+    id: 'ghostimport',
     title: 'ghostimport',
-    description: 'An npm package that detects ghost imports in your code — imports of packages that don\'t exist, hallucinated by AI coding tools. Helps prevent supply-chain attacks by catching them before they reach production, with CI and pre-commit support.',
-    tags: ['TypeScript', 'Node.js', 'CLI', 'npm', 'AI Safety'],
+    kind: { en: 'Open source · Supply-chain security', pt: 'Open source · Segurança da cadeia de fornecimento' },
+    year: '2026',
+    description: {
+      en: 'An npm package that catches imports of packages that don\'t exist, the names AI coding tools make up. Someone can register one of those names and ship a malicious postinstall script with it. ghostimport checks every import against the live npm registry, flags typosquats and risky install scripts, and runs as a CLI, a GitHub Action, a pre-commit hook or an MCP server for coding agents.',
+      pt: 'Um pacote npm que deteta imports de pacotes que não existem, os nomes que as ferramentas de IA inventam. Qualquer pessoa pode registar um desses nomes e publicar com ele um script postinstall malicioso. O ghostimport verifica cada import no registo npm em tempo real, assinala typosquats e scripts de instalação arriscados, e funciona como CLI, GitHub Action, hook de pre-commit ou servidor MCP para agentes de programação.',
+    },
+    note: {
+      text: {
+        en: 'Scanning 174 public repos with it turned up an unregistered name in Lovable\'s project template. Lovable fixed it and credited the report on their HackerOne thanks page.',
+        pt: 'Ao analisar 174 repositórios públicos com ele, encontrei um nome não registado no template de projetos da Lovable. A Lovable corrigiu-o e reconheceu o relatório na sua página de agradecimentos do HackerOne.',
+      },
+      href: '#research',
+      label: { en: 'Read the field report', pt: 'Ler o relatório' },
+    },
+    tags: ['TypeScript', 'Node.js', 'CLI', 'MCP', 'npm'],
     link: 'https://github.com/FGuerreir0/ghostimport',
-    liveLink: 'https://www.npmjs.com/package/ghostimport',
+    liveLink: 'https://fguerreir0.github.io/ghostimport/',
     npmPackage: 'ghostimport',
     githubRepo: 'FGuerreir0/ghostimport',
-    gradient: 'gradient-2',
     icon: '/images/ghostimport.png'
   },
   {
-    title: 'DotDrop',
-    description: 'A real-time collaborative pixel art platform inspired by r/place. Join to other players in creating massive pixel art together! Built with React, Canvas API, WebSockets, and Supabase.',
-    tags: ['React', 'WebSockets', 'Supabase', 'Canvas API'],
-    link: 'https://github.com/FGuerreir0/dotdrop',
-    liveLink: 'https://dotdrop-art.netlify.app/',
-    gradient: 'gradient-1',
-    icon: '/images/dotdrop.png'
+    id: 'alcoda',
+    title: 'Al Coda',
+    kind: { en: 'Product · SaaS', pt: 'Produto · SaaS' },
+    year: '2026',
+    description: {
+      en: 'An all-in-one management platform for music organizations. Manage attendance, events, fuel voucher reimbursements, and analytics for orchestras, bands, choirs, and ensembles — with multi-language, multi-currency, and role-based access control.',
+      pt: 'Uma plataforma de gestão completa para organizações musicais. Presenças, eventos, reembolso de senhas de combustível e análises para orquestras, bandas, coros e ensembles, com várias línguas, várias moedas e controlo de acessos por função.',
+    },
+    tags: ['React', 'TypeScript', 'Node.js', 'Supabase', 'TailwindCSS'],
+    liveLink: 'https://alcoda.pt/',
+    icon: '/images/alcoda.png'
   },
   {
+    // Kept anonymous on purpose: no name, link, logo or identifying details.
+    id: 'marketplace',
+    title: { en: 'Booking marketplace', pt: 'Marketplace de reservas' },
+    kind: { en: 'Private project · Marketplace', pt: 'Projeto privado · Marketplace' },
+    year: '2026',
+    description: {
+      en: 'A two-sided marketplace that connects customers with independent service providers. It has real-time messaging, booking requests, reviews, and a dashboard where providers manage their offer and follow their numbers.',
+      pt: 'Um marketplace que liga clientes a prestadores de serviços independentes. Tem mensagens em tempo real, pedidos de reserva, avaliações e um painel onde os prestadores gerem a sua oferta e acompanham os resultados.',
+    },
+    tags: ['Next.js', 'React', 'TypeScript', 'Supabase', 'Realtime'],
+    privateNote: { en: 'Private · details on request', pt: 'Privado · detalhes a pedido' },
+  },
+  {
+    id: 'ensinarmais',
+    title: 'EnsinarMais',
+    kind: { en: 'Product · Education', pt: 'Produto · Educação' },
+    year: '2026',
+    description: {
+      en: 'Coding bootcamps for children and teenagers in Portugal, in three levels: block puzzles for ages 6–9, written JavaScript for 10–14, and full-stack web apps from 15. There are no videos and no AI. Kids learn by solving problems, a little every day, and every level includes an internet-safety track and missions for the whole family.',
+      pt: 'Bootcamps de programação para crianças e jovens em Portugal, em três níveis: puzzles de blocos dos 6 aos 9 anos, JavaScript escrito dos 10 aos 14 e aplicações web full stack a partir dos 15. Sem vídeos e sem IA. As crianças aprendem a resolver problemas, um pouco todos os dias, e cada nível inclui um percurso de segurança na internet e missões para toda a família.',
+    },
+    tags: ['Next.js', 'React', 'TypeScript', 'Supabase', 'Stripe'],
+    liveLink: 'https://www.ensinarmais.pt/',
+    icon: '/images/ensinarmais.svg'
+  },
+  {
+    id: 'clarinetes',
+    title: 'Clarinetes de Santiago',
+    kind: { en: 'Website · Music association', pt: 'Website · Associação musical' },
+    year: '2022 — 2026',
+    description: {
+      en: 'The official website of a clarinet ensemble from Palmela, designed and built by me and maintained since 2022. It has an editorial layout with scroll-driven animations, pages for upcoming concerts and events, a photo gallery, and a contact form that runs on a Netlify serverless function. It also has structured data and a sitemap, so the ensemble shows up in local search.',
+      pt: 'O site oficial de um ensemble de clarinetes de Palmela, desenhado e desenvolvido por mim e mantido desde 2022. Tem um layout editorial com animações ligadas ao scroll, páginas de concertos e eventos, uma galeria de fotografias e um formulário de contacto que corre numa função serverless da Netlify. Tem também dados estruturados e um sitemap, para que o ensemble apareça nas pesquisas locais.',
+    },
+    tags: ['React', 'React Router', 'Netlify Functions', 'SEO', 'CSS scroll animations'],
+    liveLink: 'https://clarinetesdesantiago.netlify.app/',
+    icon: '/images/clarinetes.png'
+  },
+  {
+    id: 'twitch-bot',
     title: 'Twitch Bot',
-    description: 'A customizable Twitch chat bot that engages viewers, manages chat commands, runs interactive events, and automates moderation for a smooth streaming experience.',
+    kind: { en: 'Open source · Tooling', pt: 'Open source · Ferramentas' },
+    description: {
+      en: 'A customizable Twitch chat bot that engages viewers, manages chat commands, runs interactive events, and automates moderation for a smooth streaming experience.',
+      pt: 'Um bot de chat para a Twitch, personalizável, que interage com os espectadores, gere comandos, organiza eventos interativos e automatiza a moderação para uma transmissão sem falhas.',
+    },
     tags: ['Node.js', 'Twitch API', 'Automation'],
     link: 'https://github.com/FGuerreir0/my-twitch-chat-bot',
     liveLink: 'https://www.twitch.tv/fabio_guerreiro',
-    gradient: 'gradient-3',
     icon: '/images/twitch.png'
   }
 ];
@@ -86,81 +139,95 @@ function useProjectStats(project) {
   return stats;
 }
 
-function ProjectCard({ project }) {
+function ProjectRow({ project, index }) {
+  const { t } = useLang();
   const stats = useProjectStats(project);
 
+  const scrollTo = (e, target) => {
+    e.preventDefault();
+    document.querySelector(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
-    <div className="project-card">
-      <div className={`project-image ${project.gradient}`}>
-        {project.icon && (
-          <img src={project.icon} alt={`${project.title} icon`} className="project-icon" />
+    <article className="project reveal">
+      <div className="project-index">{String(index + 1).padStart(2, '0')}</div>
+
+      <div className="project-body">
+        <p className="eyebrow">
+          {t(project.kind)}
+          {project.year && <> · {project.year}</>}
+        </p>
+        <h3 className="project-title">{t(project.title)}</h3>
+        <p className="project-description">{t(project.description)}</p>
+
+        {project.note && (
+          <p className="project-note">
+            {t(project.note.text)}{' '}
+            <a href={project.note.href} onClick={(e) => scrollTo(e, project.note.href)}>
+              {t(project.note.label)} →
+            </a>
+          </p>
         )}
-        <div className="project-overlay">
-          <div className="project-overlay-links">
+
+        <p className="project-tags">{project.tags.join(' · ')}</p>
+
+        <div className="project-footer">
+          <div className="project-links">
             {project.liveLink && (
-              <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="project-link" title="Live Demo">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                  <polyline points="15 3 21 3 21 9"/>
-                  <line x1="10" y1="14" x2="21" y2="3"/>
-                </svg>
+              <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="text-button">
+                {t({ en: 'Visit', pt: 'Visitar' })} <span aria-hidden="true">↗</span>
               </a>
             )}
             {project.link && (
-              <a href={project.link} target="_blank" rel="noopener noreferrer" className="project-link" title="GitHub">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.026 2.747-1.026.546 1.378.202 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.2 22 16.447 22 12.021 22 6.484 17.522 2 12 2z"/>
-                </svg>
+              <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-button">
+                {t({ en: 'Source', pt: 'Código' })} <span aria-hidden="true">↗</span>
               </a>
             )}
+            {project.privateNote && <span className="project-private">{t(project.privateNote)}</span>}
           </div>
-        </div>
-      </div>
-      <div className="project-content">
-        <div className="project-title-row">
-          <h3>{project.title}</h3>
           {(stats.stars != null || stats.downloads != null) && (
             <div className="project-stats">
               {stats.stars != null && (
-                <span className="project-stat" title="GitHub stars">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                  </svg>
-                  {formatCount(stats.stars)}
-                </span>
+                <span title="GitHub stars">★ {formatCount(stats.stars)} {t({ en: 'stars', pt: 'estrelas' })}</span>
               )}
               {stats.downloads != null && (
-                <span className="project-stat" title="npm downloads (last month)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="7 10 12 15 17 10"/>
-                    <line x1="12" y1="15" x2="12" y2="3"/>
-                  </svg>
-                  {formatCount(stats.downloads)}/mo
-                </span>
+                <span title="npm downloads (last month)">↓ {formatCount(stats.downloads)} / {t({ en: 'month', pt: 'mês' })}</span>
               )}
             </div>
           )}
         </div>
-        <p>{project.description}</p>
-        <div className="project-tags">
-          {project.tags.map((tag, tagIndex) => (
-            <span key={tagIndex}>{tag}</span>
-          ))}
-        </div>
       </div>
-    </div>
+
+      <div className={`project-plate${project.icon ? '' : ' is-private'}`} aria-hidden="true">
+        {project.icon ? (
+          <img src={project.icon} alt="" className="project-icon" loading="lazy" width="512" height="512" data-parallax="0.12" />
+        ) : (
+          <span className="project-mark" data-parallax="0.12">{t({ en: 'Private', pt: 'Privado' })}</span>
+        )}
+      </div>
+    </article>
   );
 }
 
 function Projects() {
+  const { t } = useLang();
+
   return (
-    <section id="projects" className="projects">
+    <section id="projects" className="section">
       <div className="container">
-        <h2 className="section-title">Featured Projects</h2>
-        <div className="projects-grid">
+        <header className="section-head reveal">
+          <p className="section-number">02</p>
+          <h2 className="section-title">{t({ en: 'Selected work', pt: 'Trabalho selecionado' })}</h2>
+          <p className="section-intro">
+            {t({
+              en: 'Products, open-source tools and experiments. Some are shipped and in use, some are still growing.',
+              pt: 'Produtos, ferramentas open source e experiências. Alguns já estão lançados e em uso, outros ainda estão a crescer.',
+            })}
+          </p>
+        </header>
+        <div className="project-list">
           {projectsData.map((project, index) => (
-            <ProjectCard key={index} project={project} />
+            <ProjectRow key={project.id} project={project} index={index} />
           ))}
         </div>
       </div>

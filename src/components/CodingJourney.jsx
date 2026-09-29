@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useLang } from '../i18n';
 
 // GitHub contributions per year (2026 is in progress — update as it grows)
 const GITHUB_CONTRIBUTIONS_DATA = [
@@ -18,11 +19,15 @@ const FALLBACK_STATS = { contributions: 1168, repositories: 49, followers: 80 };
 
 const GITHUB_USER = 'FGuerreir0';
 
+// Mirrors the ink/rule tokens in index.css; Recharts needs literal colours.
+const CHART = { ink: '#0E0E0C', subtle: '#8C8C84', rule: '#DFDED7', ground: '#FAFAF8' };
+
 function formatTick(value) {
   return value >= 1000 ? `${(value / 1000).toFixed(1).replace(/\.0$/, '')}k` : value;
 }
 
 function CodingJourney() {
+  const { t } = useLang();
   const [stats, setStats] = useState({
     contributions: 0,
     repositories: 0,
@@ -109,7 +114,7 @@ function CodingJourney() {
       return <circle key={index} cx={cx} cy={cy} r={0} fill="none" />;
     }
     return (
-      <circle key={index} cx={cx} cy={cy} r={5} fill="#0a0f1e" stroke="#8b5cf6" strokeWidth={2.5} />
+      <circle key={index} cx={cx} cy={cy} r={5} fill={CHART.ground} stroke={CHART.ink} strokeWidth={1.5} />
     );
   };
 
@@ -117,22 +122,12 @@ function CodingJourney() {
     if (active && payload && payload.length) {
       const point = payload[0].payload;
       return (
-        <div style={{
-          background: 'rgba(15, 23, 42, 0.95)',
-          border: '1px solid #6366f1',
-          borderRadius: '8px',
-          padding: '12px',
-          backdropFilter: 'blur(10px)',
-        }}>
-          <p style={{ color: '#f1f5f9', margin: 0, fontSize: '14px' }}>
-            <strong>{point.year}</strong>
-            {point.inProgress && (
-              <span style={{ color: '#94a3b8', fontWeight: 400 }}> · year in progress</span>
-            )}
+        <div className="chart-tooltip">
+          <p className="chart-tooltip-year">
+            {point.year}
+            {point.inProgress && <span> · {t({ en: 'in progress', pt: 'em curso' })}</span>}
           </p>
-          <p style={{ color: '#c4b5fd', margin: '4px 0 0 0', fontSize: '16px', fontWeight: '600' }}>
-            {payload[0].value.toLocaleString()} contributions
-          </p>
+          <p className="chart-tooltip-value">{payload[0].value.toLocaleString()} {t({ en: 'contributions', pt: 'contribuições' })}</p>
         </div>
       );
     }
@@ -140,69 +135,71 @@ function CodingJourney() {
   };
 
   return (
-    <div className="github-contributions-section">
-      <div className="chart-stats-wrapper">
-        <div className="github-contributions-chart">
-          <div className="chart-container">
-            <svg className="github-icon" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={GITHUB_CONTRIBUTIONS_DATA} margin={{ top: 16, right: 16, left: -12, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="aboutColorContributions" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.45}/>
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.02}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid vertical={false} stroke="#334155" strokeOpacity={0.25} />
-                <XAxis
-                  dataKey="year"
-                  stroke="#94a3b8"
-                  style={{ fontSize: '12px' }}
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                />
-                <YAxis
-                  stroke="#94a3b8"
-                  style={{ fontSize: '12px' }}
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={formatTick}
-                  width={44}
-                />
-                <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#6366f1', strokeWidth: 1, strokeDasharray: '4 4' }} />
-                <Area
-                  type="monotone"
-                  dataKey="contributions"
-                  stroke="#8b5cf6"
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#aboutColorContributions)"
-                  dot={renderDot}
-                  activeDot={{ r: 5, strokeWidth: 2, stroke: '#0a0f1e' }}
-                  animationDuration={1200}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+    <div className="journey">
+      <div className="journey-head">
+        <p className="eyebrow">{t({ en: 'On GitHub, year by year', pt: 'No GitHub, ano a ano' })}</p>
+        <a href={`https://github.com/${GITHUB_USER}`} target="_blank" rel="noopener noreferrer" className="text-button">
+          @{GITHUB_USER} <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <div className="journey-grid">
+        <div className="journey-chart">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={GITHUB_CONTRIBUTIONS_DATA} margin={{ top: 16, right: 16, left: -12, bottom: 0 }}>
+              <defs>
+                <linearGradient id="aboutColorContributions" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={CHART.ink} stopOpacity={0.14}/>
+                  <stop offset="100%" stopColor={CHART.ink} stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} stroke={CHART.rule} />
+              <XAxis
+                dataKey="year"
+                stroke={CHART.subtle}
+                style={{ fontSize: '12px', fontFamily: 'Inter, system-ui, sans-serif' }}
+                tickLine={false}
+                axisLine={{ stroke: CHART.ink }}
+                tickMargin={10}
+              />
+              <YAxis
+                stroke={CHART.subtle}
+                style={{ fontSize: '12px', fontFamily: 'Inter, system-ui, sans-serif' }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={formatTick}
+                width={44}
+              />
+              <Tooltip content={<CustomTooltip />} cursor={{ stroke: CHART.ink, strokeWidth: 1, strokeDasharray: '3 3' }} />
+              <Area
+                type="monotone"
+                dataKey="contributions"
+                stroke={CHART.ink}
+                strokeWidth={1.5}
+                fillOpacity={1}
+                fill="url(#aboutColorContributions)"
+                dot={renderDot}
+                activeDot={{ r: 4, strokeWidth: 1.5, stroke: CHART.ground, fill: CHART.ink }}
+                animationDuration={1200}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
 
-        <div className="about-stats">
-          <div className="stat-card" ref={el => statCardsRef.current[0] = el}>
-            <div className="stat-number">{stats.contributions}+</div>
-            <div className="stat-label">Contributions in 2026</div>
+        <dl className="journey-stats">
+          <div className="journey-stat" ref={el => statCardsRef.current[0] = el}>
+            <dd>{stats.contributions.toLocaleString()}+</dd>
+            <dt>{t({ en: 'Contributions in 2026', pt: 'Contribuições em 2026' })}</dt>
           </div>
-          <div className="stat-card" ref={el => statCardsRef.current[1] = el}>
-            <div className="stat-number">{stats.repositories}+</div>
-            <div className="stat-label">Repositories</div>
+          <div className="journey-stat" ref={el => statCardsRef.current[1] = el}>
+            <dd>{stats.repositories}+</dd>
+            <dt>{t({ en: 'Public repositories', pt: 'Repositórios públicos' })}</dt>
           </div>
-          <div className="stat-card" ref={el => statCardsRef.current[2] = el}>
-            <div className="stat-number">{stats.followers}+</div>
-            <div className="stat-label">Followers</div>
+          <div className="journey-stat" ref={el => statCardsRef.current[2] = el}>
+            <dd>{stats.followers}+</dd>
+            <dt>{t({ en: 'Followers', pt: 'Seguidores' })}</dt>
           </div>
-        </div>
+        </dl>
       </div>
     </div>
   );
