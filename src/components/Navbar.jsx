@@ -61,6 +61,18 @@ function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
+    if (!open) return;
+
+    // Esc closes it, and so does widening past the mobile breakpoint.
+    const onKey = (e) => e.key === 'Escape' && setOpen(false);
+    const wide = window.matchMedia('(min-width: 761px)');
+    const onWide = (e) => e.matches && setOpen(false);
+    window.addEventListener('keydown', onKey);
+    wide.addEventListener('change', onWide);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      wide.removeEventListener('change', onWide);
+    };
   }, [open]);
 
   const handleClick = (e, target) => {
